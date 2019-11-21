@@ -32,11 +32,6 @@
 			<artifactId>spring-boot-starter-batch</artifactId>
 		</dependency>
 
-		<!--<dependency>-->
-			<!--<groupId>org.hsqldb</groupId>-->
-			<!--<artifactId>hsqldb</artifactId>-->
-			<!--<scope>runtime</scope>-->
-		<!--</dependency>-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -47,11 +42,6 @@
 					<artifactId>junit-vintage-engine</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.batch</groupId>
-			<artifactId>spring-batch-test</artifactId>
-			<scope>test</scope>
 		</dependency>
 		<!--web application-->
 		<dependency>
@@ -77,6 +67,20 @@
 		<dependency>
 			<groupId>com.github.diamond</groupId>
 			<artifactId>super-diamond-client</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>ch.qos.logback</groupId>
+					<artifactId>logback-classic</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>ch.qos.logback</groupId>
+					<artifactId>logback-access</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>jcl-over-slf4j</artifactId>
+				</exclusion>
+			</exclusions>
 			<version>${super-diamond-client.version}</version>
 		</dependency>
 		<dependency>
@@ -84,12 +88,31 @@
 			<artifactId>spring-aspects</artifactId>
 			<version>${spring-aspects.version}</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+		 <!--https://mvnrepository.com/artifact/mysql/mysql-connector-java-->
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>${mysql-connector-java.version}</version>
 		</dependency>
+
+        <!-- 添加slf4j日志api -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.26</version>
+        </dependency>
+        <!-- 添加logback-classic依赖 -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.3</version>
+        </dependency>
+        <!-- 添加logback-core依赖 -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>1.2.3</version>
+        </dependency>
 
 		<dependency>
 			<groupId>com.datatrees</groupId>
@@ -115,18 +138,6 @@
 			<groupId>org.springframework.batch</groupId>
 			<artifactId>spring-batch-test</artifactId>
 		</dependency>
-		<!--<dependency>-->
-			<!--<groupId>com.treefinance.payment</groupId>-->
-			<!--<artifactId>payment-common</artifactId>-->
-			<!--<version>${payment-common.version}</version>-->
-			<!--<exclusions>-->
-				<!--<exclusion>-->
-					<!--<groupId>org.redisson</groupId>-->
-					<!--<artifactId>redisson</artifactId>-->
-				<!--</exclusion>-->
-			<!--</exclusions>-->
-		<!--</dependency>-->
-
 	</dependencies>
 
 	<build>

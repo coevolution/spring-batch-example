@@ -31,6 +31,7 @@
     <logger name="org.apache.http.impl.conn.PoolingHttpClientConnectionManager" level="INFO" />
     <logger name="org.apache.zookeeper.ClientCnxn" level="INFO" />
     <logger name="com.alibaba.dubbo" level="INFO" />
+    <logger name="org.springframework.jdbc" level="info" />
     <root level="info">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE"/>

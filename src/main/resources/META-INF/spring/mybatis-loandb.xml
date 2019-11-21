@@ -59,12 +59,11 @@
             <!--</array>-->
         <!--</property>-->
 
-        <!--<property name="typeHandlers">-->
-            <!--<array>-->
-                <!--<bean class="com.datatrees.commons.db.handler.DecimalTypeHandler"/>-->
-                <!--<bean class="com.datatrees.commons.db.handler.DecimalTypeHandler"/>-->
-            <!--</array>-->
-        <!--</property>-->
+        <property name="typeHandlers">
+            <array>
+                <bean class="com.datatrees.commons.db.handler.DecimalTypeHandler"/>
+            </array>
+        </property>
     </bean>
 
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
