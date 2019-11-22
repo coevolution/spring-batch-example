@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
  * @date 2019/11/18 下午2:04
  * @Version 1.0
  */
-@Component("MyTasklet")
 public class MyTasklet implements Tasklet {
     private static Logger logger = LoggerFactory.getLogger(MyTasklet.class);
 

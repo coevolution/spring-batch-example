@@ -1,6 +1,9 @@
-package com.treefinance.payment.batch.jmx;
+package com.treefinance.payment.batch.common;
 
+import com.treefinance.payment.batch.jmx.SimpleMessageApplicationEvent;
 import org.aspectj.lang.JoinPoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
@@ -13,6 +16,7 @@ import org.springframework.context.ApplicationEventPublisherAware;
  * publishes notifications in the form of {@link org.springframework.context.ApplicationEvent}.
  */
 public class StepExecutionApplicationEventAdvice implements ApplicationEventPublisherAware {
+    private static Logger logger = LoggerFactory.getLogger(StepExecutionApplicationEventAdvice.class);
     private ApplicationEventPublisher applicationEventPublisher;
 
     /*

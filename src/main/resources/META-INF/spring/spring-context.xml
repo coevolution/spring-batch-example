@@ -9,4 +9,28 @@
 
     <import resource="classpath*:spring/dashu-diamond-spring.xml"/>
     <import resource="classpath:META-INF/spring/mybatis-loandb.xml"/>
+    <bean name="logAdvice" class="com.treefinance.payment.batch.common.LogAdvice"/>
+    <bean name="eventAdvice" class="com.treefinance.payment.batch.common.StepExecutionApplicationEventAdvice"/>
+    <aop:config>
+        <aop:aspect id="moduleLogging" ref="logAdvice">
+            <aop:after
+                    pointcut="execution( * org.springframework.batch.item.ItemWriter+.write(..)) and args(item)"
+                    method="doStronglyTypedLogging" />
+            <aop:after-returning
+                    pointcut="execution( * org.springframework.batch.item.ItemReader+.read(..))"
+                    method="doStronglyTypedLoggingForNoParams"
+                    returning="returnVal"/>
+        </aop:aspect>
+        <aop:aspect ref="eventAdvice">
+            <aop:before
+                    pointcut="execution( * org.springframework.batch..Step+.execute(..)) and args(stepExecution)"
+                    method="before" />
+            <aop:after
+                    pointcut="execution( * org.springframework.batch..Step+.execute(..)) and args(stepExecution)"
+                    method="after" />
+            <aop:after-throwing throwing="t"
+                                pointcut="execution( * org.springframework.batch..Step+.execute(..)) and args(stepExecution)"
+                                method="onError" />
+        </aop:aspect>
+    </aop:config>
 </beans>
