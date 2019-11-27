@@ -4,7 +4,6 @@ import com.treefinance.payment.batch.processing.premium.SinglePremiumScheduleDTO
 import org.aspectj.lang.JoinPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.batch.core.StepExecution;
 
 /**
  * @author lxp
@@ -19,9 +18,5 @@ public class LogAdvice {
 
     public void doStronglyTypedLogging(JoinPoint joinPoint, Object item){
         logger.info(joinPoint.toShortString()+ " Processed: " + item);
-    }
-
-    public void doStronglyTypedLoggingForNoParams(JoinPoint joinPoint,Object returnVal){
-        logger.info(joinPoint.toShortString()+ " Processed: "+((SinglePremiumScheduleDTO)returnVal).getId());
     }
 }

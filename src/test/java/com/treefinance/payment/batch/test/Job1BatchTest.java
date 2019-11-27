@@ -1,4 +1,4 @@
-package com.treefinance.payment.batch;
+package com.treefinance.payment.batch.test;
 
 import com.treefinance.payment.batch.builders.Job1Configuration;
 import com.treefinance.payment.batch.common.SampleBatchConfigurer;
@@ -20,8 +20,6 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @Version 1.0
  */
 @RunWith(SpringRunner.class)
-@Import({SampleBatchConfigurer.class, Job1Configuration.class})
-@ImportResource(value = {"classpath:META-INF/spring/spring-context.xml", "classpath:job-runner-context.xml"})
 public class Job1BatchTest {
     @Autowired private JobLauncherTestUtils jobLauncherTestUtils;
     @Autowired

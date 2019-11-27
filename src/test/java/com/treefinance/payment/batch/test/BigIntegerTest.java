@@ -1,5 +1,6 @@
-package com.treefinance.payment.batch;
+package com.treefinance.payment.batch.test;
 
+import com.treefinance.payment.batch.BaseTestConfig;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,23 +27,7 @@ import static org.junit.Assert.fail;
  * @date 2019/11/18 下午7:59
  * @Version 1.0
  */
-public class BigIntegerTest {
-    private DataSource dataSource;
-
-    private ConfigurableApplicationContext context;
-
-    @Before
-    public void setUp() {
-        this.context = new AnnotationConfigApplicationContext(TestDataSourceConfiguration.class);
-        this.dataSource = (DataSource) context.getBean("dataSource");
-    }
-
-    @After
-    public void tearDown() {
-        if(this.context != null) {
-            this.context.close();
-        }
-    }
+public class BigIntegerTest extends BaseTestConfig {
     public static void main(String[] args) {
         BigInteger mapped = new BigInteger("0");
         BigInteger r1 = mapped.setBit(0);
@@ -70,29 +55,4 @@ public class BigIntegerTest {
         }
     }
 
-    @Configuration
-    public static class TestDataSourceConfiguration {
-
-        private static final String CREATE_SQL = "CREATE TABLE FOO  (\n" +
-            "\tID BIGINT IDENTITY NOT NULL PRIMARY KEY ,\n" +
-            "\tFIRST BIGINT ,\n" +
-            "\tSECOND VARCHAR(5) NOT NULL,\n" +
-            "\tTHIRD VARCHAR(5) NOT NULL) ;";
-
-        @Bean
-        public DataSource dataSource() {
-            return new EmbeddedDatabaseFactory().getDatabase();
-        }
-
-        @Bean
-        public DataSourceInitializer initializer(DataSource dataSource) {
-            DataSourceInitializer dataSourceInitializer = new DataSourceInitializer();
-            dataSourceInitializer.setDataSource(dataSource);
-
-            Resource create = new ByteArrayResource(CREATE_SQL.getBytes());
-            dataSourceInitializer.setDatabasePopulator(new ResourceDatabasePopulator(create));
-
-            return dataSourceInitializer;
-        }
-    }
 }

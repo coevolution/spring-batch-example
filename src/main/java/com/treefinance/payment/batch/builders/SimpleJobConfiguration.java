@@ -2,7 +2,6 @@ package com.treefinance.payment.batch.builders;
 
 import com.datatrees.commons.utils.DateUtil;
 import com.datatrees.commons.utils.JsonUtil;
-import com.datatrees.dao.loandb.domain.SinglePremiumSchedule;
 import com.treefinance.payment.batch.processing.premium.SinglePremiumScheduleDTO;
 import com.treefinance.payment.batch.tasklet.MyTasklet;
 import org.springframework.batch.core.Job;
@@ -30,7 +29,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -54,7 +52,7 @@ import java.util.Map;
         ItemReader<SinglePremiumScheduleDTO> reader, ItemWriter<SinglePremiumScheduleDTO> writer)
         throws Exception {
         return this.stepBuilderFactory.get("step1").transactionManager(
-            transactionManager).<SinglePremiumScheduleDTO, SinglePremiumScheduleDTO>chunk(2)
+            transactionManager).<SinglePremiumScheduleDTO, SinglePremiumScheduleDTO>chunk(10)
             .reader(reader).writer(writer).build();
     }
 
