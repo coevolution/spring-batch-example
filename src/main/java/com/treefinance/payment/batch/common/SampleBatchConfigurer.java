@@ -5,7 +5,7 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.support.SimpleJobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.core.repository.support.JobRepositoryFactoryBean;
+import org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
@@ -31,16 +31,16 @@ public class SampleBatchConfigurer extends DefaultBatchConfigurer {
     @Override
     protected JobRepository createJobRepository() throws Exception {
         //in-memory repository
-//        MapJobRepositoryFactoryBean factoryBean = new MapJobRepositoryFactoryBean();
-//        factoryBean.setTransactionManager(getTransactionManager());
-//        return factoryBean.getObject();
-        JobRepositoryFactoryBean factory = new JobRepositoryFactoryBean();
-        factory.setDataSource(dataSource);
-        factory.setTransactionManager(transactionManager);
-        factory.setIsolationLevelForCreate("ISOLATION_SERIALIZABLE");
-        factory.setTablePrefix("BATCH_");
-        factory.setMaxVarCharLength(1000);
-        return factory.getObject();
+        MapJobRepositoryFactoryBean factoryBean = new MapJobRepositoryFactoryBean();
+        factoryBean.setTransactionManager(getTransactionManager());
+        return factoryBean.getObject();
+//        JobRepositoryFactoryBean factory = new JobRepositoryFactoryBean();
+//        factory.setDataSource(dataSource);
+//        factory.setTransactionManager(transactionManager);
+//        factory.setIsolationLevelForCreate("ISOLATION_SERIALIZABLE");
+//        factory.setTablePrefix("BATCH_");
+//        factory.setMaxVarCharLength(1000);
+//        return factory.getObject();
     }
     @Override
     protected JobLauncher createJobLauncher() throws Exception {

@@ -2,6 +2,7 @@ package com.treefinance.payment.batch.builders;
 
 import com.datatrees.commons.utils.DateUtil;
 import com.datatrees.commons.utils.JsonUtil;
+import com.treefinance.payment.batch.contsants.JobConstants;
 import com.treefinance.payment.batch.processing.premium.SinglePremiumScheduleDTO;
 import com.treefinance.payment.batch.tasklet.MyTasklet;
 import org.springframework.batch.core.Job;
@@ -44,7 +45,7 @@ import java.util.Map;
 
     @Bean public Job premiumScheduleJob(JobRepository jobRepository, Step step1, Step step2)
         throws Exception {
-        return this.jobBuilderFactory.get("premiumScheduleJob").repository(jobRepository)
+        return this.jobBuilderFactory.get(JobConstants.PREMIUM_SCHEDULE_JOB).repository(jobRepository)
             .start(step1).next(step2).build();
     }
 
@@ -65,9 +66,8 @@ import java.util.Map;
     }
 
     @StepScope
-    @Bean public JdbcPagingItemReader<SinglePremiumScheduleDTO> reader(DataSource dataSource, @Value("#{jobParameters[datetime]}") String datetime)
+    @Bean public JdbcPagingItemReader<SinglePremiumScheduleDTO> reader(DataSource dataSource, @Value("#{jobParameters[target]}") Date target)
         throws Exception {
-        Date target = DateUtil.parseDate(datetime,"yyyyMMddHHmmss");
         Map<String, Object> params = new HashMap<>();
         params.put("userDueAtStart", DateUtil.dayStart(target));
         params.put("userDueAtEnd", DateUtil.dayEnd(target));
@@ -88,10 +88,11 @@ import java.util.Map;
     }
 
     @StepScope
-    @Bean public JdbcBatchItemWriter<SinglePremiumScheduleDTO> writer(DataSource dataSource, @Value("#{jobParameters[datetime]}") String datetime) {
+    @Bean public JdbcBatchItemWriter<SinglePremiumScheduleDTO> writer(DataSource dataSource, @Value("#{jobParameters[target]}") Date target) {
+        String batchNo = DateUtil.formatDate(target,"yyyyMMddHHmmss");
         return new JdbcBatchItemWriterBuilder<SinglePremiumScheduleDTO>().dataSource(dataSource)
             .sql(SQL_UPDATE).itemPreparedStatementSetter((item, preparedStatement) -> {
-                preparedStatement.setString(1, datetime);
+                preparedStatement.setString(1, batchNo);
                 preparedStatement.setString(2, "GARONA");
                 preparedStatement.setString(3, "PREMIUM_SCHEDULE_ID");
                 preparedStatement.setString(4, String.valueOf(item.getId()));

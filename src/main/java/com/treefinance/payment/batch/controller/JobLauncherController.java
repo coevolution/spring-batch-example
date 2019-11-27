@@ -1,9 +1,6 @@
 package com.treefinance.payment.batch.controller;
 
 import com.datatrees.commons.utils.DateUtil;
-import com.datatrees.commons.utils.JsonUtil;
-import com.treefinance.payment.batch.builders.Job1Configuration;
-import com.treefinance.payment.batch.builders.SimpleJobConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
@@ -13,11 +10,12 @@ import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.launch.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Import;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -39,19 +37,23 @@ public class JobLauncherController {
     private JobOperator jobOperator;
 
 
-    @RequestMapping("/run/{job}/{datetime}")
-    public Object handleJob(@PathVariable String job, @PathVariable String datetime) throws Exception {
-        JobParameter jobParameter1 = new JobParameter(datetime,true);
-        JobParameter jobParameter2 = new JobParameter(DateUtil.parseDate(datetime, "yyyyMMddHHmmss"));
+    @RequestMapping("/run/{job}")
+    public Object handleJob(@PathVariable String job, @RequestParam(required = false) String datetime) throws Exception {
         Map<String, JobParameter> map = new HashMap<>();
-        map.put("datetime",jobParameter1);
-        map.put("dummyDate",jobParameter2);
+        JobParameter jobParameter1 = null;
+        if(datetime == null) {
+            jobParameter1 = new JobParameter(new Date(),true);
+        } else {
+            jobParameter1 = new JobParameter(DateUtil.parseDate(datetime,"yyyyMMddHHmmss"), true);
+        }
+
+        map.put("target",jobParameter1);
         JobExecution jobExecution = jobLauncher.run((Job) applicationContext.getBean(job), new JobParameters(map));
         return jobExecution.getExitStatus();
     }
 
     @RequestMapping("/stop/{job}")
-    public Object stopJob(@PathVariable String job, @PathVariable String datetime) {
+    public Object stopJob(@PathVariable String job) {
         Set<Long> executions = null;
         try {
             executions = jobOperator.getRunningExecutions(job);

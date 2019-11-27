@@ -16,10 +16,6 @@
             <aop:after
                     pointcut="execution( * org.springframework.batch.item.ItemWriter+.write(..)) and args(item)"
                     method="doStronglyTypedLogging" />
-            <aop:after-returning
-                    pointcut="execution( * org.springframework.batch.item.ItemReader+.read(..))"
-                    method="doStronglyTypedLoggingForNoParams"
-                    returning="returnVal"/>
         </aop:aspect>
         <aop:aspect ref="eventAdvice">
             <aop:before
