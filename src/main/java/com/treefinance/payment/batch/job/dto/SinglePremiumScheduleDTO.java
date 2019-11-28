@@ -1,4 +1,4 @@
-package com.treefinance.payment.batch.processing.premium;
+package com.treefinance.payment.batch.job.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

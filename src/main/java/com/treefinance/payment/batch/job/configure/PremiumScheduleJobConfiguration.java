@@ -1,10 +1,10 @@
-package com.treefinance.payment.batch.builders;
+package com.treefinance.payment.batch.job.configure;
 
 import com.datatrees.commons.utils.DateUtil;
 import com.datatrees.commons.utils.JsonUtil;
 import com.treefinance.payment.batch.contsants.JobConstants;
-import com.treefinance.payment.batch.processing.premium.SinglePremiumScheduleDTO;
-import com.treefinance.payment.batch.tasklet.MyTasklet;
+import com.treefinance.payment.batch.job.dto.SinglePremiumScheduleDTO;
+import com.treefinance.payment.batch.job.tasklet.MyTasklet;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
@@ -37,7 +37,7 @@ import java.util.Map;
  * @date 2019/11/15 下午4:19
  * @Version 1.0
  */
-@Configuration public class SimpleJobConfiguration {
+@Configuration public class PremiumScheduleJobConfiguration {
     private static String SQL_UPDATE =
         "insert into t_tp_trade_batch(batch_no, source, biz_type, biz_value, userId, raw_data) values(?, ?, ?, ?, ?, ?)";
     @Resource private JobBuilderFactory jobBuilderFactory;

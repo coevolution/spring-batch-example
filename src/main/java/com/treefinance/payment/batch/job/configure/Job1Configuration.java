@@ -1,4 +1,4 @@
-package com.treefinance.payment.batch.builders;
+package com.treefinance.payment.batch.job.configure;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;

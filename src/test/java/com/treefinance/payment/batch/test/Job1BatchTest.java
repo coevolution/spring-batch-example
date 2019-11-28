@@ -1,7 +1,5 @@
 package com.treefinance.payment.batch.test;
 
-import com.treefinance.payment.batch.builders.Job1Configuration;
-import com.treefinance.payment.batch.common.SampleBatchConfigurer;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,8 +8,6 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.ImportResource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
