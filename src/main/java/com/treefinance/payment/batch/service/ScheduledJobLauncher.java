@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -42,9 +41,5 @@ import java.util.Map;
             "[launchPremiumScheduleJob finished] job execution exit code:{},exit description:{}",
             jobExecution.getExitStatus().getExitCode(),
             jobExecution.getExitStatus().getExitDescription());
-    }
-
-    @Scheduled(fixedRate = 5000) public void reportCurrentTime() {
-        logger.info("每隔五秒钟执行一次： " + new Date());
     }
 }

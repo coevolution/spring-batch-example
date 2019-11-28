@@ -17,6 +17,6 @@ public class LogAdvice {
     private static Logger logger = LoggerFactory.getLogger(LogAdvice.class);
 
     public void doStronglyTypedLogging(JoinPoint joinPoint, Object item){
-        logger.info(joinPoint.toShortString()+ " Processed: " + item);
+        logger.info(joinPoint.toShortString()+ " processed.");
     }
 }

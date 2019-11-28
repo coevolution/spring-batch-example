@@ -78,7 +78,7 @@ import java.util.Map;
             "select id,global_Platform_Id,loan_Order_Id,user_Id,amount,user_Due_At,cleared,status");
         queryProvider.setFromClause("from loandb.qs_single_premium_schedule");
         queryProvider.setWhereClause(
-            "where user_Due_At between :userDueAtStart and :userDueAtEnd and cleared = false");
+            "where user_Due_At between :userDueAtStart and :userDueAtEnd and cleared = false and user_Id not in (select userId from loandb.t_bad_property_dispose)");
         queryProvider.setSortKey("id");
 
         return new JdbcPagingItemReaderBuilder<SinglePremiumScheduleDTO>().dataSource(dataSource)

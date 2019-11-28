@@ -10,9 +10,10 @@
 	</parent>
 	<groupId>com.treefinance</groupId>
 	<artifactId>payment-batch</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1-RELEASE</version>
 	<name>payment-batch</name>
 	<description>payment-batch</description>
+	<packaging>jar</packaging>
 
 	<properties>
 		<java.version>1.8</java.version>
@@ -21,7 +22,7 @@
 		<datatrees-parent.version>5.0.3-TP-PAYMENT.RELEASE</datatrees-parent.version>
 		<super-diamond-client.version>2.1.0</super-diamond-client.version>
 		<spring-aspects.version>5.2.0.RELEASE</spring-aspects.version>
-		<payment-common.version>1.9.8</payment-common.version>
+		<payment-common.version>2.0.1.RELEASE</payment-common.version>
 		<mybatis.version>3.5.3</mybatis.version>
 		<mysql-connector-java.version>5.1.40</mysql-connector-java.version>
 	</properties>
@@ -45,8 +46,8 @@
 		</dependency>
 		<!--web application-->
 		<dependency>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-web</artifactId>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
 		<dependency>
@@ -121,12 +122,8 @@
 			<version>${datatrees-parent.version}</version>
 			<exclusions>
 				<exclusion>
-					<groupId>org.mybatis</groupId>
-					<artifactId>mybatis-spring</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.mybatis</groupId>
-					<artifactId>mybatis</artifactId>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -156,10 +153,61 @@
 	</dependencies>
 
 	<build>
+		<finalName>tp-${project.artifactId}-${current.time}</finalName>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>*.properties</include>
+					<include>**/*.properties</include>
+				</includes>
+				<filtering>true</filtering>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>*.xml</include>
+					<include>**/*.xml</include>
+					<include>*.txt</include>
+				</includes>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>resources</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.9.1</version>
+				<executions>
+					<execution>
+						<id>timestamp-property</id>
+						<goals>
+							<goal>timestamp-property</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<name>current.time</name>
+					<pattern>yyyyMMddHHmmss</pattern>
+					<timeZone>GMT+8</timeZone>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

@@ -1,15 +1,13 @@
 package com.treefinance.payment.batch.test;
 
 import com.treefinance.payment.batch.BaseTestConfig;
-import org.apache.commons.lang3.time.DateUtils;
 import org.junit.Test;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.database.JdbcPagingItemReader;
 import org.springframework.batch.item.database.Order;
 import org.springframework.batch.item.database.builder.JdbcPagingItemReaderBuilder;
-import org.springframework.context.annotation.ImportResource;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,11 +23,10 @@ public class JdbcPagingItemReaderBuilderTest extends BaseTestConfig {
     public void testPageSize1() throws Exception {
         Map<String, Order> sortKeys = new HashMap<>(1);
         sortKeys.put("ID", Order.DESCENDING);
-        Date start = DateUtils.parseDate("2019-11-21 00:00:00","yyyy-MM-dd HH:mm:ss");
-        Date end = DateUtils.parseDate("2019-11-21 23:59:59","yyyy-MM-dd HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
         Map<String, Object> params = new HashMap<>();
-        params.put("dayStart",start);
-        params.put("dayEnd",end);
+        params.put("dayStart",now.withHour(0).withMinute(0).withSecond(0));
+        params.put("dayEnd",now.withHour(23).withMinute(59).withSecond(59));
 
         JdbcPagingItemReader<Foo> reader = new JdbcPagingItemReaderBuilder<Foo>()
             .dataSource(this.dataSource)

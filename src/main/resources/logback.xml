@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration scan="true" scanPeriod="60 seconds" debug="true">
     <property name="LOG_HOME" value="/dashu/log"/>
-    <property name="FILE_PREFIX" value="tp-${project.artifactId}"/>
+    <property name="FILE_PREFIX" value="tp-@project.artifactId@"/>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
