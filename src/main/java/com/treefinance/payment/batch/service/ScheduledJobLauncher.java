@@ -27,7 +27,7 @@ import java.util.Map;
     @Autowired private JobLauncher jobLauncher;
     @Autowired private ApplicationContext applicationContext;
 
-    @Scheduled(cron = "0 30 9,19 * * ?") public void launchPremiumScheduleJob()
+    @Scheduled(cron = "0 15 9,19 * * ?") public void launchPremiumScheduleJob()
         throws JobParametersInvalidException, JobExecutionAlreadyRunningException,
         JobRestartException, JobInstanceAlreadyCompleteException {
         Map<String, JobParameter> map = new HashMap<>(2);
