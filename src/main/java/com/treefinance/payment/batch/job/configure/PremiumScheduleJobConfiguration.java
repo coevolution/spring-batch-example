@@ -53,7 +53,7 @@ import java.util.Map;
         ItemReader<SinglePremiumScheduleDTO> reader, ItemWriter<SinglePremiumScheduleDTO> writer)
         throws Exception {
         return this.stepBuilderFactory.get("step1").transactionManager(
-            transactionManager).<SinglePremiumScheduleDTO, SinglePremiumScheduleDTO>chunk(10)
+            transactionManager).<SinglePremiumScheduleDTO, SinglePremiumScheduleDTO>chunk(100)
             .reader(reader).writer(writer).build();
     }
 

@@ -37,9 +37,6 @@ import java.util.Map;
         JobExecution jobExecution = jobLauncher
             .run((Job) applicationContext.getBean(JobConstants.PREMIUM_SCHEDULE_JOB),
                 new JobParameters(map));
-        logger.info(
-            "[launchPremiumScheduleJob finished] job execution exit code:{},exit description:{}",
-            jobExecution.getExitStatus().getExitCode(),
-            jobExecution.getExitStatus().getExitDescription());
+        logger.info("[launchPremiumScheduleJob finished] ", jobExecution.toString());
     }
 }

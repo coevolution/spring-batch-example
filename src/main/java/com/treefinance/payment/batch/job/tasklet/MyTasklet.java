@@ -20,7 +20,7 @@ public class MyTasklet implements Tasklet {
     @Override
     public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext)
         throws Exception {
-        logger.info("MyTasklet executed:{},{}",JsonUtil.jsonFromObject(stepContribution.getExitStatus()),JsonUtil.jsonFromObject(chunkContext.isComplete()));
+        logger.info("MyTasklet executing:{},{}",JsonUtil.jsonFromObject(stepContribution.getExitStatus()),JsonUtil.jsonFromObject(chunkContext.isComplete()));
         return RepeatStatus.FINISHED;
     }
 }
