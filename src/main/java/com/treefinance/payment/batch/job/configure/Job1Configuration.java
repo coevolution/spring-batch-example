@@ -1,5 +1,6 @@
 package com.treefinance.payment.batch.job.configure;
 
+import com.treefinance.payment.batch.job.listener.PaymentJobExecutionListener;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
@@ -23,6 +24,7 @@ public class Job1Configuration {
     private JobBuilderFactory jobBuilderFactory;
     @Resource
     private StepBuilderFactory stepBuilderFactory;
+    @Resource private PaymentJobExecutionListener paymentJobExecutionListener;
 
     public Job1Configuration(JobBuilderFactory jobBuilderFactory,
         StepBuilderFactory stepBuilderFactory) {
@@ -32,7 +34,7 @@ public class Job1Configuration {
     }
 
     @Bean public Job job1() {
-        return jobBuilderFactory.get("job1").start(step1()).next(step2()).build();
+        return jobBuilderFactory.get("job1").start(step1()).next(step2()).listener(paymentJobExecutionListener).build();
     }
 
     private Step step1() {

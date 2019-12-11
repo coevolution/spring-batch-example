@@ -133,6 +133,11 @@
 			<version>${datatrees-parent.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>com.treefinance</groupId>
+			<artifactId>payment-object-explorer</artifactId>
+			<version>1.0.0.release</version>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.batch</groupId>
 			<artifactId>spring-batch-test</artifactId>
 			<scope>test</scope>

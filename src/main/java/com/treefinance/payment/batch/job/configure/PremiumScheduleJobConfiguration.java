@@ -4,6 +4,7 @@ import com.datatrees.commons.utils.DateUtil;
 import com.datatrees.commons.utils.JsonUtil;
 import com.treefinance.payment.batch.contsants.JobConstants;
 import com.treefinance.payment.batch.job.dto.SinglePremiumScheduleDTO;
+import com.treefinance.payment.batch.job.listener.PaymentJobExecutionListener;
 import com.treefinance.payment.batch.job.tasklet.MyTasklet;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -42,11 +43,12 @@ import java.util.Map;
         "insert into t_tp_trade_batch(batch_no, source, biz_type, biz_value, userId, raw_data) values(?, ?, ?, ?, ?, ?)";
     @Resource private JobBuilderFactory jobBuilderFactory;
     @Resource private StepBuilderFactory stepBuilderFactory;
+    @Resource private PaymentJobExecutionListener paymentJobExecutionListener;
 
     @Bean public Job premiumScheduleJob(JobRepository jobRepository, Step step1, Step step2)
         throws Exception {
         return this.jobBuilderFactory.get(JobConstants.PREMIUM_SCHEDULE_JOB).repository(jobRepository)
-            .start(step1).next(step2).build();
+            .start(step1).next(step2).listener(paymentJobExecutionListener).build();
     }
 
     @Bean public Step step1(PlatformTransactionManager transactionManager,
