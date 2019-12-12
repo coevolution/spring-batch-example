@@ -94,4 +94,8 @@ import java.util.Set;
     @RequestMapping("summaries/memory") public Object monitorInMemoryRepository() {
         return StringUtils.join(repositoryMemoryMonitor.summarize().entrySet().iterator(), "\n");
     }
+
+    @RequestMapping("repository/clear") public Object clear() {
+        return repositoryMemoryMonitor.clear();
+    }
 }

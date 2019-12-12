@@ -39,7 +39,7 @@ import java.util.Map;
                 new JobParameters(map));
         logger.info("[launchPremiumScheduleJob finished] ", jobExecution.toString());
     }
-    @Scheduled(cron = "0/30 * * * * ?") public void launchJob1()
+    @Scheduled(cron = "30 * 11-17 * * ?") public void launchJob1()
         throws JobParametersInvalidException, JobExecutionAlreadyRunningException,
         JobRestartException, JobInstanceAlreadyCompleteException {
         Map<String, JobParameter> map = new HashMap<>(2);
