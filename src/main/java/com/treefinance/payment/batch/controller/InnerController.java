@@ -64,7 +64,7 @@ import java.util.Set;
      * @return
      * @throws Exception
      */
-    @RequestMapping("/operations/run/{job}") public Long handleJob(@PathVariable String job,
+    @RequestMapping("/operations/run/{job}") public Object handleJob(@PathVariable String job,
         HttpServletRequest request) throws Exception {
         Map<String, JobParameter> jobParams = new HashMap<>();
         getAllRequestParam(request).forEach((key, value) -> {

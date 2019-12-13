@@ -1,5 +1,6 @@
 package com.treefinance.payment.batch.service;
 
+import com.treefinance.payment.batch.config.SchedulerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.*;
@@ -10,9 +11,7 @@ import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
-import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,6 +25,15 @@ import java.util.Set;
     @Autowired private JobOperator jobOperator;
     @Autowired private JobLauncher jobLauncher;
     @Autowired private ApplicationContext applicationContext;
+    @Autowired private SchedulerConfig schedulerConfig;
+
+    public Boolean setSchedulerExecutable(boolean flag) {
+        synchronized (schedulerConfig) {
+            Boolean oldValue = schedulerConfig.getOverallExecutable();
+            schedulerConfig.setOverallExecutable(flag);
+            return oldValue;
+        }
+    }
 
     public Set<String> getJobNames() {
         return jobOperator.getJobNames();
@@ -33,6 +41,7 @@ import java.util.Set;
 
     /**
      * get execution summary with execution id
+     *
      * @param executionId
      * @return
      */
@@ -49,6 +58,7 @@ import java.util.Set;
 
     /**
      * get execution params with execution id
+     *
      * @param executionId
      * @return
      */
@@ -72,6 +82,10 @@ import java.util.Set;
      */
     @Deprecated public Long startJob(String jobName, String jobParameters) {
         Long result = null;
+        if(!schedulerConfig.getOverallExecutable()) {
+            logger.info("[startJob] aborted due to executable false");
+            return null;
+        }
         try {
             result = jobOperator.start(jobName, jobParameters);
         } catch (NoSuchJobException | JobInstanceAlreadyExistsException | JobParametersInvalidException e) {
@@ -86,11 +100,16 @@ import java.util.Set;
     /**
      * restart a job with execution id.
      * can be used when execution failed.
+     *
      * @param executionId
      * @return
      */
     public Long restartJob(long executionId) {
         Long result = null;
+        if(!schedulerConfig.getOverallExecutable()) {
+            logger.info("[reStartJob] aborted due to executable false");
+            return null;
+        }
         try {
             result = jobOperator.restart(executionId);
         } catch (JobInstanceAlreadyCompleteException | NoSuchJobExecutionException | NoSuchJobException | JobParametersInvalidException | JobRestartException e) {
@@ -103,47 +122,59 @@ import java.util.Set;
     /**
      * run a job repeatably.
      * can be used when execution failed.
+     *
      * @param jobName
      * @param jobParameterMap
      * @return
      */
-    public Long runJob(String jobName, Map<String, JobParameter> jobParameterMap) {
-        if (StringUtils.isEmpty(jobParameterMap.get("target"))) {
-            jobParameterMap.put("target", new JobParameter(new Date(), true));
-
-        }
+    public JobExecution runJob(String jobName, Map<String, JobParameter> jobParameterMap) {
         JobExecution jobExecution = null;
+        if(!schedulerConfig.getOverallExecutable()) {
+            logger.info("[runJob] aborted due to executable false");
+            return null;
+        }
         try {
-            jobExecution =
-                jobLauncher.run((Job) applicationContext.getBean(jobName), new JobParameters(jobParameterMap));
+            jobExecution = jobLauncher
+                .run((Job) applicationContext.getBean(jobName), new JobParameters(jobParameterMap));
         } catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException | JobParametersInvalidException e) {
             e.printStackTrace();
             return null;
         }
-        logger.info("[runJob] finished.jobName={},jobParameters={}", jobName, jobParameterMap.toString());
-        return jobExecution.getId();
+        logger.info("[runJob] finished.jobName={},jobParameters={}", jobName,
+            jobParameterMap.toString());
+        return jobExecution;
     }
 
     /**
      * stop a job with execution id
+     *
      * @param executionId
      * @return
      */
     public Boolean stopJob(long executionId) {
+        if(!schedulerConfig.getOverallExecutable()) {
+            logger.info("[runJob] aborted due to executable false");
+            return null;
+        }
         try {
             return jobOperator.stop(executionId);
         } catch (NoSuchJobExecutionException | JobExecutionNotRunningException e) {
-            logger.warn("[stopJob] failed.executionId={}.", executionId,e);
+            logger.warn("[stopJob] failed.executionId={}.", executionId, e);
             return false;
         }
     }
 
     /**
      * stop a job with job name
+     *
      * @param jobName
      * @return
      */
     public Boolean stopJob(String jobName) {
+        if(!schedulerConfig.getOverallExecutable()) {
+            logger.info("[runJob] aborted due to executable false");
+            return null;
+        }
         try {
             Set<Long> executions = jobOperator.getRunningExecutions(jobName);
             //只会停第一个?

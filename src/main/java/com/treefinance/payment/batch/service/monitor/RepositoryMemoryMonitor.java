@@ -2,6 +2,7 @@ package com.treefinance.payment.batch.service.monitor;
 
 
 import com.treefinance.payment.batch.contsants.JobConstants;
+import com.treefinance.payment.batch.service.JobOperationService;
 import objectexplorer.MemoryMeasurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,7 @@ import java.util.Set;
     private static volatile LinkedHashMap<String, Long> repositoryByteSize = new LinkedHashMap<>();
     @Autowired private JobExplorer jobExplorer;
     @Autowired private JobRepository jobRepository;
+    @Autowired private JobOperationService jobOperationService;
     @Autowired private MapJobRepositoryFactoryBean mapJobRepositoryFactoryBean;
 
     private long getJobExplorerSize() {
@@ -41,10 +43,12 @@ import java.util.Set;
         return MemoryMeasurer.measureBytes(jobRepository);
     }
 
-    private synchronized Map<String, Long> innerSummarize(String appender) {
-        repositoryByteSize
-            .put(JobConstants.JOB_REPOSITORY + "_" + appender, getJobRepositorySize());
-        //        repositoryByteSize.put(JobConstants.JOB_EXPLORER + "_" + appender, getJobExplorerSize());
+    private Map<String, Long> innerSummarize(String appender) {
+        synchronized (repositoryByteSize) {
+            repositoryByteSize
+                .put(JobConstants.JOB_REPOSITORY + "_" + appender, getJobRepositorySize());
+            //        repositoryByteSize.put(JobConstants.JOB_EXPLORER + "_" + appender, getJobExplorerSize());
+        }
         return repositoryByteSize;
     }
 
@@ -57,33 +61,42 @@ import java.util.Set;
         return innerSummarize(str);
     }
 
-    public synchronized Boolean clear() {
+    public Boolean clear() {
         //防止新任务执行
-
-        //检查没有正在执行的任务
-        boolean canClear = true;
-        long start = System.currentTimeMillis();
-        while (System.currentTimeMillis() - start < 10000) {
-            canClear = true;
-            List<String> jobs = jobExplorer.getJobNames();
-            for (String job : jobs) {
-                Set<JobExecution> executions = jobExplorer.findRunningJobExecutions(job);
-                if (executions == null || executions.size() == 0) {
-                    continue;
+        Boolean reset = jobOperationService.setSchedulerExecutable(false);
+        try {
+            //检查没有正在执行的任务
+            boolean canClear = true;
+            long start = System.currentTimeMillis();
+            while (System.currentTimeMillis() - start < 20000) {
+                canClear = true;
+                List<String> jobs = jobExplorer.getJobNames();
+                for (String job : jobs) {
+                    Set<JobExecution> executions = jobExplorer.findRunningJobExecutions(job);
+                    if (executions == null || executions.size() == 0) {
+                        continue;
+                    }
+                    canClear = false;
+                    logger
+                        .debug("[clear] 存在正在执行的任务,放弃清理!耗时{}ms", System.currentTimeMillis() - start);
+                    break;
                 }
-                canClear = false;
-                logger.warn("[clear] 存在正在执行的任务,放弃清理!耗时{}ms",System.currentTimeMillis()-start);
-                break;
             }
-        }
 
-        //开始清理
-        if(canClear) {
-            mapJobRepositoryFactoryBean.clear();
-            repositoryByteSize.clear();
-            return true;
-        } else {
-            return false;
+            //开始清理
+            if (canClear) {
+                logger.info("[clear] 开始清理!本次清理检查耗时{}ms",System.currentTimeMillis()-start);
+                mapJobRepositoryFactoryBean.clear();
+                repositoryByteSize.clear();
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            //reset
+            jobOperationService.setSchedulerExecutable(reset);
         }
     }
 }
