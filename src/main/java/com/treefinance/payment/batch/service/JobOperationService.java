@@ -140,7 +140,7 @@ import java.util.Set;
             e.printStackTrace();
             return null;
         }
-        logger.info("[runJob] finished.jobName={},jobParameters={}", jobName,
+        logger.debug("[runJob] finished.jobName={},jobParameters={}", jobName,
             jobParameterMap.toString());
         return jobExecution;
     }
