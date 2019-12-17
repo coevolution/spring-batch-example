@@ -4,10 +4,6 @@ import com.github.diamond.client.extend.annotation.AfterUpdate;
 import com.github.diamond.client.extend.annotation.BeforeUpdate;
 import com.github.diamond.client.extend.annotation.DAttribute;
 import com.github.diamond.client.extend.annotation.DResource;
-import com.treefinance.payment.batch.common.ApplicationContextProvider;
-import com.treefinance.payment.batch.common.SchedulerControlInterface;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -24,23 +20,11 @@ import java.util.Map;
         super.before(key, newValue);
     }
 
-    @Override @BeforeUpdate public void after(String key, Object newValue) {
+    @Override @AfterUpdate public void after(String key, Object newValue) {
         super.after(key, newValue);
     }
 
-
-
-    @DAttribute(key = "batch.scheduler.premiumScheduleJob.cron") private String
-        premiumScheduleJobCron;
     @DAttribute(key = "batch.scheduler.job.cron") private String jobCronStr;
-
-    public String getPremiumScheduleJobCron() {
-        return premiumScheduleJobCron;
-    }
-
-    public void setPremiumScheduleJobCron(String premiumScheduleJobCron) {
-        this.premiumScheduleJobCron = premiumScheduleJobCron;
-    }
 
     public String getJobCronStr() {
         return jobCronStr;

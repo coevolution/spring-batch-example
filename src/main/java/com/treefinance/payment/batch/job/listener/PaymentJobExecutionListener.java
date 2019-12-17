@@ -21,12 +21,12 @@ import org.springframework.context.annotation.Configuration;
     @Override public void beforeJob(JobExecution jobExecution) {
         String descriptor = jobExecution.getJobInstance().getJobName() + "_" + jobExecution.getId();
         String appender = StringUtils.join(repositoryMemoryMonitor.summarize(descriptor).entrySet().iterator(),"\n");
-        logger.info("[beforeJob] {}", StringUtils.abbreviate(appender,appender.length(),256));
+        logger.debug("[beforeJob] {}", StringUtils.abbreviate(appender,appender.length(),256));
     }
 
     @Override public void afterJob(JobExecution jobExecution) {
         String descriptor = jobExecution.getJobInstance().getJobName() + "_" + jobExecution.getId();
         String appender = StringUtils.join(repositoryMemoryMonitor.summarize(descriptor).entrySet().iterator(),"\n");
-        logger.info("[afterJob] {}", StringUtils.abbreviate(appender,appender.length(),256));
+        logger.debug("[afterJob] {}", StringUtils.abbreviate(appender,appender.length(),256));
     }
 }

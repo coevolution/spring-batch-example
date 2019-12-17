@@ -2,9 +2,9 @@ package com.treefinance.payment.batch.common;
 
 import com.treefinance.payment.batch.config.SchedulerConfig;
 import com.treefinance.payment.batch.service.JobOperationService;
-import com.treefinance.payment.batch.service.JobScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.core.JobParameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +13,8 @@ import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.scheduling.support.CronTrigger;
 
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -27,9 +29,8 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
     private static final Logger logger = LoggerFactory.getLogger(PaymentSchedulingConfigurer.class);
     @Autowired private JobOperationService jobOperationService;
     @Autowired private SchedulerConfig schedulerConfig;
-    @Autowired private JobScheduler jobScheduler;
     private TaskScheduler taskScheduler;
-    private ScheduledFuture future;
+    private Map<String,ScheduledFuture> futureMap = new ConcurrentHashMap<>();
 
     @Override public void configureTasks(ScheduledTaskRegistrar scheduledTaskRegistrar) {
         scheduledTaskRegistrar.setScheduler(taskExecutor());
@@ -38,17 +39,50 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
     }
 
     @Bean public Executor taskExecutor() {
-        return new ScheduledThreadPoolExecutor(100);
+        int cores = Runtime.getRuntime().availableProcessors();
+        logger.info("调度器核心线程数为:{}",cores);
+        return new ScheduledThreadPoolExecutor(cores*2);
     }
 
 
     @Override public void start() {
-        future = taskScheduler.schedule(() -> {
-            jobScheduler.launchPremiumScheduleJob();
-        }, new CronTrigger(schedulerConfig.getPremiumScheduleJobCron()));
+        jobOperationService.getJobNames().forEach(each -> {
+            String cron = schedulerConfig.getJobCron(each);
+            if(!"-".equals(cron)) {
+                futureMap.put(each, taskScheduler.schedule(() -> {
+                    jobOperationService.runJob(each, new HashMap<String, JobParameter>() {
+                        {
+                            put("target", new JobParameter(new Date(), true));
+                        }
+                    });
+                }, new CronTrigger(cron)));
+            }
+        });
+    }
+
+    @Override
+    public void start(String jobName) {
+        String cron = schedulerConfig.getJobCron(jobName);
+        if(!"-".equals(cron)) {
+            futureMap.put(jobName, taskScheduler.schedule(() -> {
+                jobOperationService.runJob(jobName, new HashMap<String, JobParameter>() {
+                    {
+                        put("target", new JobParameter(new Date(), true));
+                    }
+                });
+            }, new CronTrigger(cron)));
+        }
+    }
+
+    @Override public void stop(String jobName) {
+        futureMap.get(jobName).cancel(false);
     }
 
     @Override public void stop() {
-        future.cancel(false);
+        synchronized (futureMap) {
+            futureMap.entrySet().parallelStream().forEach(each-> {
+                each.getValue().cancel(false);
+            });
+        }
     }
 }

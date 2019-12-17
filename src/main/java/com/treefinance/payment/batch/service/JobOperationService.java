@@ -1,6 +1,6 @@
 package com.treefinance.payment.batch.service;
 
-import com.treefinance.payment.batch.config.SchedulerConfig;
+import com.treefinance.payment.batch.config.DefaultConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.*;
@@ -25,12 +25,12 @@ import java.util.Set;
     @Autowired private JobOperator jobOperator;
     @Autowired private JobLauncher jobLauncher;
     @Autowired private ApplicationContext applicationContext;
-    @Autowired private SchedulerConfig schedulerConfig;
+    @Autowired private DefaultConfig defaultConfig;
 
     public Boolean setSchedulerExecutable(boolean flag) {
-        synchronized (schedulerConfig) {
-            Boolean oldValue = schedulerConfig.getOverallExecutable();
-            schedulerConfig.setOverallExecutable(flag);
+        synchronized (defaultConfig) {
+            Boolean oldValue = defaultConfig.getOverallExecutable();
+            defaultConfig.setOverallExecutable(flag);
             return oldValue;
         }
     }
@@ -82,7 +82,7 @@ import java.util.Set;
      */
     @Deprecated public Long startJob(String jobName, String jobParameters) {
         Long result = null;
-        if(!schedulerConfig.getOverallExecutable()) {
+        if(!defaultConfig.getOverallExecutable()) {
             logger.info("[startJob] aborted due to executable false");
             return null;
         }
@@ -106,7 +106,7 @@ import java.util.Set;
      */
     public Long restartJob(long executionId) {
         Long result = null;
-        if(!schedulerConfig.getOverallExecutable()) {
+        if(!defaultConfig.getOverallExecutable()) {
             logger.info("[reStartJob] aborted due to executable false");
             return null;
         }
@@ -129,7 +129,7 @@ import java.util.Set;
      */
     public JobExecution runJob(String jobName, Map<String, JobParameter> jobParameterMap) {
         JobExecution jobExecution = null;
-        if(!schedulerConfig.getOverallExecutable()) {
+        if(!defaultConfig.getOverallExecutable()) {
             logger.info("[runJob] aborted due to executable false");
             return null;
         }
@@ -152,7 +152,7 @@ import java.util.Set;
      * @return
      */
     public Boolean stopJob(long executionId) {
-        if(!schedulerConfig.getOverallExecutable()) {
+        if(!defaultConfig.getOverallExecutable()) {
             logger.info("[runJob] aborted due to executable false");
             return null;
         }
@@ -171,7 +171,7 @@ import java.util.Set;
      * @return
      */
     public Boolean stopJob(String jobName) {
-        if(!schedulerConfig.getOverallExecutable()) {
+        if(!defaultConfig.getOverallExecutable()) {
             logger.info("[runJob] aborted due to executable false");
             return null;
         }

@@ -7,5 +7,9 @@ package com.treefinance.payment.batch.common;
  */
 public interface SchedulerControlInterface {
     void start();
+
+    void start(String jobName);
+
+    void stop(String jobName);
     void stop();
 }
