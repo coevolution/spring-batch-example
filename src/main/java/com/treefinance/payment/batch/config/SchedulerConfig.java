@@ -4,6 +4,8 @@ import com.github.diamond.client.extend.annotation.AfterUpdate;
 import com.github.diamond.client.extend.annotation.BeforeUpdate;
 import com.github.diamond.client.extend.annotation.DAttribute;
 import com.github.diamond.client.extend.annotation.DResource;
+import com.treefinance.payment.batch.common.ApplicationContextProvider;
+import com.treefinance.payment.batch.common.SchedulerControlInterface;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -24,10 +26,16 @@ public class SchedulerConfig {
     private Map<String,String> map;
     @BeforeUpdate
     public void before(String key, Object newValue) {
+        SchedulerControlInterface bean =
+            ApplicationContextProvider.getApplicationContext().getBean(SchedulerControlInterface.class);
+        bean.stop();
         logger.info(key + " update to " + newValue + " start...");
     }
     @AfterUpdate
     public void after(String key, Object newValue) {
+        SchedulerControlInterface bean =
+            ApplicationContextProvider.getApplicationContext().getBean(SchedulerControlInterface.class);
+        bean.start();
         initJobCronMap();
         logger.info(key + " update to " + newValue + " end...");
     }
