@@ -18,43 +18,21 @@ import java.util.Map;
  * @date 2019/12/12 下午3:29
  * @Version 1.0
  */
-@Component
-@DResource
-public class SchedulerConfig {
-    private static final Logger logger = LoggerFactory.getLogger(SchedulerConfig.class);
+@Component @DResource public class SchedulerConfig extends AbstractSchedulerConfig {
 
-    private Map<String,String> map;
-    @BeforeUpdate
-    public void before(String key, Object newValue) {
-        SchedulerControlInterface bean =
-            ApplicationContextProvider.getApplicationContext().getBean(SchedulerControlInterface.class);
-        bean.stop();
-        logger.info(key + " update to " + newValue + " start...");
-    }
-    @AfterUpdate
-    public void after(String key, Object newValue) {
-        SchedulerControlInterface bean =
-            ApplicationContextProvider.getApplicationContext().getBean(SchedulerControlInterface.class);
-        bean.start();
-        initJobCronMap();
-        logger.info(key + " update to " + newValue + " end...");
+    @Override @BeforeUpdate public void before(String key, Object newValue) {
+        super.before(key, newValue);
     }
 
-    @DAttribute(key = "batch.scheduler.executable")
-    private Boolean overallExecutable;
-
-    @DAttribute(key = "batch.scheduler.premiumScheduleJob.cron")
-    private String premiumScheduleJobCron;
-    @DAttribute(key = "batch.scheduler.job.cron")
-    private String jobCronStr;
-
-    public Boolean getOverallExecutable() {
-        return overallExecutable;
+    @Override @BeforeUpdate public void after(String key, Object newValue) {
+        super.after(key, newValue);
     }
 
-    public void setOverallExecutable(Boolean overallExecutable) {
-        this.overallExecutable = overallExecutable;
-    }
+
+
+    @DAttribute(key = "batch.scheduler.premiumScheduleJob.cron") private String
+        premiumScheduleJobCron;
+    @DAttribute(key = "batch.scheduler.job.cron") private String jobCronStr;
 
     public String getPremiumScheduleJobCron() {
         return premiumScheduleJobCron;
@@ -72,23 +50,16 @@ public class SchedulerConfig {
         this.jobCronStr = jobCronStr;
     }
 
-
-    private Map<String,String> initJobCronMap() {
-        if(map != null) {
+    @Override public Map<String, String> initJobCronMap() {
+        if (map != null) {
             map.clear();
         }
-        map = new HashMap<>();
+        map = new HashMap<>(16);
         String[] strs = jobCronStr.split(",");
-        for(String str:strs) {
+        for (String str : strs) {
             String[] strs2 = str.split(":");
-            map.put(strs2[0],strs2[1]);
+            map.put(strs2[0], strs2[1]);
         }
         return map;
-    }
-    public String getJobCron(String jobName) {
-        if(map == null) {
-            initJobCronMap();
-        }
-        return map.get(jobName);
     }
 }
