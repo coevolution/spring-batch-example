@@ -133,6 +133,11 @@
 			<version>${datatrees-parent.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>com.treefintech.notify</groupId>
+			<artifactId>notify-facade</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+		<dependency>
 			<groupId>com.treefinance</groupId>
 			<artifactId>payment-object-explorer</artifactId>
 			<version>1.0.0.release</version>
@@ -155,6 +160,30 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
+
+		<!--dubbo-->
+		<dependency>
+			<groupId>org.apache.zookeeper</groupId>
+			<artifactId>zookeeper</artifactId>
+			<version>3.4.8</version>
+		</dependency>
+		<dependency>
+			<groupId>com.101tec</groupId>
+			<artifactId>zkclient</artifactId>
+			<version>0.3</version>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>dubbo</artifactId>
+			<version>2.5.3</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -173,7 +202,6 @@
 				<includes>
 					<include>*.xml</include>
 					<include>**/*.xml</include>
-					<include>*.txt</include>
 				</includes>
 				<filtering>true</filtering>
 			</resource>

@@ -38,7 +38,7 @@ public class BaseController {
         if (!StringUtils.isEmpty(parameter)) {
             try {
                 return Integer.parseInt(parameter);
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException ignored) {
             }
         }
 

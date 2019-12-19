@@ -13,11 +13,20 @@ import org.springframework.stereotype.Component;
 @DResource
 public class DefaultConfig {
     @DAttribute(key = "batch.scheduler.executable") private Boolean overallExecutable;
+    @DAttribute(key = "batch.email.list") private String emailList;
     public Boolean getOverallExecutable() {
         return overallExecutable;
     }
 
     public void setOverallExecutable(Boolean overallExecutable) {
         this.overallExecutable = overallExecutable;
+    }
+
+    public String getEmailList() {
+        return emailList;
+    }
+
+    public void setEmailList(String emailList) {
+        this.emailList = emailList;
     }
 }

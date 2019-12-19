@@ -1,11 +1,12 @@
 package com.treefinance.payment.batch.job.configure;
 
-import com.treefinance.payment.batch.job.listener.PaymentJobExecutionListener;
+import com.treefinance.payment.batch.listener.PaymentJobExecutionListener;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -24,7 +25,8 @@ public class Job1Configuration {
     private JobBuilderFactory jobBuilderFactory;
     @Resource
     private StepBuilderFactory stepBuilderFactory;
-    @Resource private PaymentJobExecutionListener paymentJobExecutionListener;
+    @Autowired
+    private PaymentJobExecutionListener paymentJobExecutionListener;
 
     public Job1Configuration(JobBuilderFactory jobBuilderFactory,
         StepBuilderFactory stepBuilderFactory) {
@@ -34,7 +36,9 @@ public class Job1Configuration {
     }
 
     @Bean public Job job1() {
-        return jobBuilderFactory.get("job1").start(step1()).next(step2()).listener(paymentJobExecutionListener).build();
+        return jobBuilderFactory.get("job1").start(step1()).next(step2())
+            .listener(paymentJobExecutionListener)
+            .build();
     }
 
     private Step step1() {
@@ -51,7 +55,7 @@ public class Job1Configuration {
             int nextInt = random.nextInt(3000);
             Thread.sleep(nextInt);
             if (nextInt % 5 == 0) {
-                throw new Exception("Boom!");
+                throw new RuntimeException("Boom!");
             }
             return RepeatStatus.FINISHED;
         }).build();

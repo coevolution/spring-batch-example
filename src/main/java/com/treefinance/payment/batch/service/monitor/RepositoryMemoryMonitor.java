@@ -33,14 +33,25 @@ import java.util.Set;
     @Autowired private JobExplorer jobExplorer;
     @Autowired private JobRepository jobRepository;
     @Autowired private JobOperationService jobOperationService;
-    @Autowired private MapJobRepositoryFactoryBean mapJobRepositoryFactoryBean;
+    @Autowired(required = false) private MapJobRepositoryFactoryBean mapJobRepositoryFactoryBean;
 
     private long getJobExplorerSize() {
-        return MemoryMeasurer.measureBytes(jobExplorer);
+        try {
+            return MemoryMeasurer.measureBytes(jobExplorer);
+        } catch (NoClassDefFoundError e) {
+            logger.warn("未配置MemoryMeasurer启动项", e);
+            return 0L;
+        }
     }
 
     private long getJobRepositorySize() {
-        return MemoryMeasurer.measureBytes(jobRepository);
+        try {
+            return MemoryMeasurer.measureBytes(jobRepository);
+        } catch (NoClassDefFoundError e) {
+            //-javaagent:/Users/dashu/.m2/repository/com/treefinance/payment-object-explorer/1.0.0.release/payment-object-explorer-1.0.0.release.jar
+            logger.warn("未配置MemoryMeasurer启动项", e);
+            return 0L;
+        }
     }
 
     private Map<String, Long> innerSummarize(String appender) {
@@ -53,7 +64,7 @@ import java.util.Set;
     }
 
     public Map<String, Long> summarize() {
-        return innerSummarize("summarized");
+        return innerSummarize("summarized" + "_" + LocalDateTime.now());
     }
 
     public Map<String, Long> summarize(String descriptor) {
@@ -85,7 +96,7 @@ import java.util.Set;
 
             //开始清理
             if (canClear) {
-                logger.info("[clear] 开始清理!本次清理检查耗时{}ms",System.currentTimeMillis()-start);
+                logger.info("[clear] 开始清理!本次清理检查耗时{}ms", System.currentTimeMillis() - start);
                 mapJobRepositoryFactoryBean.clear();
                 repositoryByteSize.clear();
                 return true;

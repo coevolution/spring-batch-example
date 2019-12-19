@@ -9,6 +9,7 @@
 
     <import resource="classpath*:spring/dashu-diamond-spring.xml"/>
     <import resource="classpath:META-INF/spring/mybatis-loandb.xml"/>
+    <import resource="classpath*:META-INF/spring/dubbo-context.xml"/>
     <bean name="logAdvice" class="com.treefinance.payment.batch.common.LogAdvice"/>
     <aop:config>
         <aop:aspect id="moduleLogging" ref="logAdvice">
