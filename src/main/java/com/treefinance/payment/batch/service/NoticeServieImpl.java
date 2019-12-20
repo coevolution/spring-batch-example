@@ -1,9 +1,9 @@
 package com.treefinance.payment.batch.service;
 
+import com.alibaba.dubbo.config.annotation.Reference;
 import com.datatrees.commons.utils.DateUtil;
 import com.datatrees.commons.utils.JsonUtil;
 import com.treefinance.payment.batch.config.DefaultConfig;
-import com.treefinance.payment.batch.listener.PaymentJobExecutionListener;
 import com.treefintech.notify.facade.request.mail.MailMessage;
 import com.treefintech.notify.facade.request.mail.MailType;
 import com.treefintech.notify.facade.service.MailFacade;
@@ -29,7 +29,7 @@ import java.util.List;
 @Service
 public class NoticeServieImpl {
     private static final Logger logger = LoggerFactory.getLogger(NoticeServieImpl.class);
-    @Autowired private MailFacade mailFacade;
+    @Reference private MailFacade mailFacade;
     @Autowired private DefaultConfig defaultConfig;
     public void sendBusinessNotice(String topic, Object object, Class clz, String message, Throwable e) {
         try {
